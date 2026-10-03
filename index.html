@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#dbe0d4">
+<meta name="description" content="BATTERY PANIC. A pocket-sized pixel arcade game. Collect power, dodge glitches, and keep the little spark alive.">
+<title>BATTERY PANIC — Pocket Arcade</title>
+<style>
+  :root { color-scheme: light; --ink:#34443d; --plastic:#eeeedd; --red:#c84c50; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { min-height:100%; background:#dbe0d4; }
+  body { margin:0; min-height:100svh; padding:24px 12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; color:var(--ink); font-family:Arial,Helvetica,sans-serif; background:radial-gradient(ellipse at 35% 25%,#edf0e6 0%,#dbe0d4 62%,#cbd3c7 100%); }
+  ::selection { background:#c84c50; color:#fff6df; }
+  button { font:inherit; cursor:pointer; -webkit-user-select:none; user-select:none; }
+  button:focus-visible { outline:3px solid #55a5a0; outline-offset:5px; }
+  .console { width:min(430px,calc(100vw - 28px),calc((100svh - 100px) * .65)); aspect-ratio:430 / 654; position:relative; flex:none; container-type:inline-size; border-radius:7% 7% 18% 7%; background:linear-gradient(120deg,#f5f4e7 0%,#e9e9d9 54%,#d9dccb 100%); box-shadow:inset 2px 3px 2px #fffdf0,inset -3px -6px 4px #b8c1ad,0 8px 0 #b5beab,0 12px 3px #a8b29e,0 28px 40px -12px #68765b70,0 45px 70px -32px #4c5a4750; }
+  .console::before { content:""; position:absolute; left:0; right:0; bottom:9.8%; height:1px; background:#bbc5b35c; box-shadow:0 1px 0 #fbfcf080; }
+  .brand { position:absolute; top:4%; left:7.2%; display:flex; align-items:center; gap:2cqw; }
+  .brand-mark { width:5.6cqw; height:3.2cqw; border:1.1cqw solid var(--ink); border-radius:1cqw; transform:skew(-12deg); position:relative; }
+  .brand-mark::after { content:""; position:absolute; width:1cqw; height:1.3cqw; background:var(--ink); right:-1.7cqw; top:-.15cqw; }
+  .brand-name { font-weight:900; font-size:3.6cqw; letter-spacing:-.08cqw; }
+  .model { position:absolute; right:7%; top:4.5%; font-size:2cqw; letter-spacing:.35cqw; font-weight:700; color:#6d7866; }
+  .bezel { position:absolute; top:10%; left:6%; width:88%; padding:6% 6.5% 7.5%; background:linear-gradient(145deg,#38463f,#283730); border-radius:5% 5% 12% 5%; box-shadow:inset 0 2px 3px #16251d,0 2px 0 #fff9e5,0 -1px 0 #a9b4a3; }
+  .bezel-top { position:absolute; top:3.8%; left:7.4%; right:7.4%; display:flex; justify-content:space-between; align-items:center; font-size:1.85cqw; font-weight:700; letter-spacing:.22cqw; color:#becbb8; }
+  .power { display:flex; align-items:center; gap:1.3cqw; }
+  .power-led { width:1.65cqw; height:1.65cqw; background:#b1dc7a; border-radius:50%; box-shadow:inset 0 1px 1px #e2ffb7,0 0 5px #ace07950; }
+  .lcd { aspect-ratio:240 / 208; position:relative; overflow:hidden; background:#142c39; box-shadow:0 0 0 2px #17231d,inset 0 0 5px #000; }
+  canvas { display:block; width:100%; height:100%; image-rendering:pixelated; image-rendering:crisp-edges; }
+  .lcd::after { content:""; pointer-events:none; position:absolute; inset:0; background:linear-gradient(135deg,#d3f3d912,transparent 45%),repeating-linear-gradient(0deg,transparent 0 3px,#09151b0b 3px 4px); box-shadow:inset 0 2px 8px #071b3650; }
+  .bezel-bottom { position:absolute; bottom:4%; left:7.5%; right:7.5%; display:flex; align-items:center; gap:2cqw; font-size:1.8cqw; letter-spacing:.35cqw; color:#becbb8; }
+  .bezel-bottom::before,.bezel-bottom::after { content:""; height:1px; flex:1; background:#798d74; }
+  .game-label { position:absolute; top:62.2%; left:7.4%; font-weight:900; font-style:italic; font-size:4.8cqw; letter-spacing:-.12cqw; }
+  .game-label small { font-size:2.2cqw; font-style:normal; font-weight:600; letter-spacing:.1cqw; margin-left:1cqw; color:#6e7d65; }
+  .dpad-well { position:absolute; left:5%; top:67%; width:34%; aspect-ratio:1; border-radius:50%; background:linear-gradient(145deg,#d0d6c4,#eeeede); box-shadow:inset 1px 2px 3px #acb69f70,0 1px 1px #fff9e6; }
+  .dpad { position:absolute; inset:10%; filter:drop-shadow(0 3px 1px #788071); }
+  .cross { position:absolute; inset:0; background:#35403b; clip-path:polygon(33% 0,67% 0,67% 33%,100% 33%,100% 67%,67% 67%,67% 100%,33% 100%,33% 67%,0 67%,0 33%,33% 33%); }
+  .dpad button { position:absolute; width:34%; height:34%; padding:0; border:0; background:linear-gradient(135deg,#4c5850,#343e38); color:#afb6a2; touch-action:none; box-shadow:inset 1px 1px 1px #667167,inset -1px -1px 1px #26312b; }
+  .dpad button[data-control="up"] { top:0; left:33%; border-radius:10% 10% 0 0; }
+  .dpad button[data-control="down"] { bottom:0; left:33%; border-radius:0 0 10% 10%; }
+  .dpad button[data-control="left"] { left:0; top:33%; border-radius:10% 0 0 10%; }
+  .dpad button[data-control="right"] { right:0; top:33%; border-radius:0 10% 10% 0; }
+  .dpad button svg { width:32%; height:32%; fill:currentColor; filter:drop-shadow(0 1px 0 #192a22); }
+  .dpad button.pressed { background:#2b3630; box-shadow:inset 1px 2px 3px #14261c; color:#d1dac2; transform:translateY(1px); }
+  .dpad-center { position:absolute; top:33%; left:33%; width:34%; height:34%; background:#3b473f; pointer-events:none; display:grid; place-items:center; }
+  .dpad-center::after { content:""; width:48%; height:48%; border-radius:50%; box-shadow:inset 0 1px 2px #27312a,0 1px 0 #61705b; background:#39443c; }
+  .actions { position:absolute; width:37%; height:20%; right:5.5%; top:67%; }
+  .actions::before { content:""; position:absolute; inset:10% -3% 28%; border-radius:50px; transform:rotate(-25deg); background:linear-gradient(#c6cebb,#eceedd); box-shadow:inset 1px 2px 3px #a3b09980,0 1px 1px #fffae6; }
+  .action-group { position:absolute; width:41%; aspect-ratio:1; }
+  .action-group.b { left:1%; top:30%; }
+  .action-group.a { right:1%; top:5%; }
+  .action { width:100%; height:100%; border:0; border-radius:50%; background:linear-gradient(135deg,#df6968,#c94b52 55%,#b63e49); color:#fbe7d5; font-size:5.4cqw; font-weight:800; box-shadow:inset 1px 2px 2px #ef9990,inset -2px -3px 2px #983642,0 4px 0 #8c3c44,0 6px 4px #73806c80; touch-action:none; }
+  .action.pressed { transform:translateY(3px); background:linear-gradient(135deg,#cf585b,#b9404b); box-shadow:inset 1px 2px 3px #963b47,0 1px 0 #8c3c44,0 2px 2px #73806c80; }
+  .action-caption { position:absolute; top:118%; left:0; width:100%; text-align:center; font-size:1.85cqw; font-weight:700; letter-spacing:.25cqw; color:#65745e; }
+  .sound { position:absolute; left:42%; top:86%; border:0; padding:1.1cqw 1.7cqw; border-radius:8px; background:#cbd2bf; box-shadow:inset 0 1px 1px #9daa94,0 1px 1px #fffbe9; color:#485541; font-size:1.8cqw; letter-spacing:.15cqw; display:flex; align-items:center; gap:.8cqw; touch-action:manipulation; }
+  .sound svg { width:3cqw; height:3cqw; fill:none; stroke:currentColor; stroke-width:1.8; }
+  .sound .muted-mark { display:none; }
+  .sound[aria-pressed="true"] .muted-mark { display:block; }
+  .sound[aria-pressed="true"] .sound-wave { display:none; }
+  .speaker { position:absolute; bottom:5.9%; right:9%; width:23%; height:6.7%; display:flex; justify-content:space-between; transform:rotate(-16deg); }
+  .speaker i { width:6%; height:100%; border-radius:5px; background:#6d7a67; box-shadow:inset 1px 1px 2px #344e3c,1px 1px 0 #fafbe9; }
+  .speaker i:nth-child(1),.speaker i:nth-child(6) { height:60%; margin-top:9%; }
+  .speaker i:nth-child(2),.speaker i:nth-child(5) { height:82%; margin-top:4%; }
+  .serial { position:absolute; left:7.5%; bottom:5%; font-size:1.75cqw; font-weight:600; letter-spacing:.2cqw; color:#7a876e; line-height:1.6; }
+  .screw { position:absolute; width:1.8cqw; height:1.8cqw; border-radius:50%; background:#bbc4af; box-shadow:inset 0 1px 2px #7b8b70,0 1px 0 #fffbed; bottom:2.8%; left:3.5%; }
+  .screw::after { content:""; position:absolute; top:46%; left:23%; width:54%; height:1px; background:#89967e; transform:rotate(-25deg); }
+  .legend { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 20px; color:#64715c; font-size:11px; line-height:1.5; }
+  .legend span { display:flex; gap:6px; align-items:center; }
+  kbd { min-width:19px; padding:1px 4px; text-align:center; border:1px solid #b0bba6; border-radius:3px; box-shadow:0 1px 0 #b0bba6; font:700 10px Arial,sans-serif; color:#47563f; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  @media (max-height:520px) and (min-width:600px) { body { justify-content:flex-start; } .console { width:min(340px,calc(100vw - 28px)); } }
+  @media (max-width:360px) { body { padding:16px 12px; gap:20px; } .legend { font-size:10px; gap:8px 12px; } }
+  @media (prefers-reduced-motion:reduce) { .console { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<main class="console" aria-label="Battery Panic handheld arcade console">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">pocket arcade</span></div>
+  <span class="model">BP / 01</span>
+  <section class="bezel" aria-label="Game screen">
+    <div class="bezel-top"><span class="power"><i class="power-led" aria-hidden="true"></i>POWER</span><span>COLOR LCD</span></div>
+    <div class="lcd"><canvas id="game" width="240" height="208" role="img" aria-label="Battery Panic: collect batteries and avoid glitches. Press A or Z to start."></canvas></div>
+    <div class="bezel-bottom">FULL COLOR · POCKET SERIES</div>
+  </section>
+  <div class="game-label">BATTERY PANIC<small>™</small></div>
+  <div class="dpad-well"><div class="dpad" role="group" aria-label="Movement controls">
+    <div class="cross" aria-hidden="true"></div>
+    <button data-control="up" aria-label="Move up"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2 11 9H1Z"/></svg></button>
+    <button data-control="left" aria-label="Move left"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m2 6 7-5v10Z"/></svg></button>
+    <button data-control="right" aria-label="Move right"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m10 6-7 5V1Z"/></svg></button>
+    <button data-control="down" aria-label="Move down"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10 1 3h10Z"/></svg></button>
+    <div class="dpad-center" aria-hidden="true"></div>
+  </div></div>
+  <div class="actions" role="group" aria-label="Action controls">
+    <div class="action-group b"><button class="action" data-control="b" aria-label="B: EMP pulse (X key)">B</button><span class="action-caption">EMP</span></div>
+    <div class="action-group a"><button class="action" data-control="a" aria-label="A: start, dash, or restart (Z key)">A</button><span class="action-caption">DASH</span></div>
+  </div>
+  <button class="sound" id="mute" aria-pressed="false" aria-label="Mute sound"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7h4l4-4v14l-4-4H3Z"/><path class="sound-wave" d="M14 6q5 4 0 8"/><path class="muted-mark" d="m14 7 5 6m0-6-5 6"/></svg><span>SOUND</span></button>
+  <div class="speaker" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="serial">KEEP THE SPARK ALIVE.<br>6-BUTTON MICRO ARCADE</div><i class="screw" aria-hidden="true"></i>
+  <p class="sr-only" id="status" aria-live="polite">Press A or Z to start. Arrow keys move, Z dashes, X sends an EMP pulse.</p>
+</main>
+<footer class="legend" aria-label="Keyboard instructions"><span><kbd>↑ ↓ ← →</kbd> MOVE</span><span><kbd>Z</kbd> DASH / START</span><span><kbd>X</kbd> EMP</span></footer>
+<script>
+(() => {
+  'use strict';
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d', {alpha:false});
+  ctx.imageSmoothingEnabled = false;
+  const W=240, H=208, FIELD={left:10,right:230,top:35,bottom:198};
+  const C={dark:'#142c39',deep:'#102431',floor:'#245249',tile:'#295b50',line:'#346c5b',mint:'#9edaa1',cream:'#f6efc9',yellow:'#ffda65',orange:'#e99a46',cyan:'#65d6d3',red:'#f57875',purple:'#b78bed',blue:'#48738b'};
+  const DASH_CD=1.2, EMP_CD=5.5, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const buttons=[...document.querySelectorAll('[data-control]')];
+  const inputs={up:new Set(),down:new Set(),left:new Set(),right:new Set(),a:new Set(),b:new Set()};
+  const pointers=new Map();
+  let state='title', player, enemies=[], batteries=[], particles=[], trails=[], rings=[];
+  let power=100, score=0, high=0, age=0, spawnClock=0, damageFlash=0, pickupFlash=0, shake=0, endDelay=0, lastTime=0, accumulator=0, visualTime=0;
+  let muted=false, audio=null;
+  try { high=Math.max(0,Math.min(999999,Number(localStorage.getItem('battery-panic-best'))||0)); } catch (_) {}
+  const status=document.getElementById('status');
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const down=k=>inputs[k].size>0;
+  // Original 3 x 5 bitmap alphabet keeps all LCD lettering crisp, with no font assets.
+  const font={
+    A:'010101111101101',B:'110101110101110',C:'011100100100011',D:'110101101101110',E:'111100110100111',F:'111100110100100',G:'011100101101011',H:'101101111101101',I:'111010010010111',J:'001001001101010',K:'101101110101101',L:'100100100100111',M:'101111111101101',N:'101111111111101',O:'010101101101010',P:'110101110100100',Q:'010101101111011',R:'110101110101101',S:'011100010001110',T:'111010010010010',U:'101101101101111',V:'101101101101010',W:'101101111111101',X:'101101010101101',Y:'101101010010010',Z:'111001010100111',
+    '0':'111101101101111','1':'010110010010111','2':'110001010100111','3':'110001010001110','4':'101101111001001','5':'111100110001110','6':'011100111101111','7':'111001010010010','8':'111101111101111','9':'111101111001110',':':'000010000010000','!':'010010010000010','/':'001001010100100','-':'000000111000000','.':'000000000000010','+':'000010111010000','?':'110001010000010'
+  };
+  function text(str,x,y,color=C.cream,scale=1,center=false) {
+    str=String(str).toUpperCase();
+    if(center) x-=Math.floor((str.length*4-1)*scale/2);
+    ctx.fillStyle=color;
+    for(let i=0;i<str.length;i++) { const glyph=font[str[i]]; if(!glyph) continue; for(let n=0;n<15;n++) if(glyph[n]==='1') ctx.fillRect(Math.round(x+i*4*scale+(n%3)*scale),Math.round(y+Math.floor(n/3)*scale),scale,scale); }
+  }
+  function rect(x,y,w,h,color) { ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),w,h); }
+  function sound(kind) {
+    if(muted||!audio) return;
+    const sequences={pickup:[[660,880,.07],[990,1320,.1]],dash:[[400,90,.12]],emp:[[120,650,.17],[650,90,.22]],damage:[[180,45,.18]],over:[[320,240,.12],[240,160,.14],[160,60,.35]],start:[[330,440,.07],[660,880,.1]]};
+    try {
+      let at=audio.currentTime;
+      for(const [from,to,duration] of sequences[kind]||[]) {
+        const osc=audio.createOscillator(),gain=audio.createGain();
+        osc.type=kind==='emp'?'sawtooth':'square';osc.frequency.setValueAtTime(from,at);osc.frequency.exponentialRampToValueAtTime(to,at+duration);
+        gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.035,at+.008);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);
+        osc.connect(gain);gain.connect(audio.destination);osc.start(at);osc.stop(at+duration+.015);
+        osc.onended=()=>{osc.disconnect();gain.disconnect();};at+=duration;
+      }
+    } catch (_) { /* Audio support never affects gameplay. */ }
+  }
+  function unlockAudio() {
+    if(muted) return;
+    try { if(!audio) { const Audio=window.AudioContext||window.webkitAudioContext;if(Audio) audio=new Audio(); } if(audio&&audio.state==='suspended') audio.resume().catch(()=>{}); } catch (_) {}
+  }
+  document.getElementById('mute').addEventListener('click',()=>{
+    muted=!muted;const button=document.getElementById('mute');button.setAttribute('aria-pressed',String(muted));button.setAttribute('aria-label',muted?'Unmute sound':'Mute sound');
+    if(audio&&muted) audio.suspend().catch(()=>{});else unlockAudio();
+  });
+  function spark(x,y,color,count=9) { for(let i=0;i<count;i++) particles.push({x,y,vx:rand(-35,35),vy:rand(-35,35),life:rand(.2,.55),color}); }
+  function placeBattery() {
+    let x,y;
+    for(let attempt=0;attempt<40;attempt++) {
+      x=rand(20,220);y=rand(47,185);
+      if(Math.hypot(x-player.x,y-player.y)>27 && batteries.every(b=>Math.hypot(x-b.x,y-b.y)>30) && enemies.every(e=>Math.hypot(x-e.x,y-e.y)>19)) break;
+    }
+    batteries.push({x,y,phase:rand(0,6)});
+  }
+  function spawnEnemy() {
+    const edge=Math.floor(rand(0,4));let x=edge===0?12:edge===1?228:rand(12,228),y=edge===2?38:edge===3?195:rand(38,195);
+    if(Math.hypot(x-player.x,y-player.y)<55) { x=player.x<W/2?226:14;y=player.y<116?192:40; }
+    enemies.push({x,y,vx:0,vy:0,stun:.7,phase:rand(0,6),color:[C.purple,C.red,C.cyan][enemies.length%3]});
+  }
+  function reset() {
+    player={x:120,y:118,faceX:0,faceY:1,dashX:0,dashY:1,dash:0,aCD:0,bCD:0,invincible:1};
+    enemies=[];batteries=[];particles=[];trails=[];rings=[];power=100;score=0;age=0;spawnClock=0;shake=0;damageFlash=0;pickupFlash=0;endDelay=0;accumulator=0;
+    for(let i=0;i<3;i++) placeBattery();for(let i=0;i<3;i++) spawnEnemy();
+  }
+  function start() { reset();state='playing';status.textContent='Game started. Collect yellow batteries. Z dashes. X sends an EMP pulse.';canvas.setAttribute('aria-label','Battery Panic in progress. Collect yellow batteries and avoid colorful glitches.');sound('start'); }
+  function end() {
+    state='over';power=0;endDelay=.5;shake=0;sound('over');
+    if(score>high) { high=score;try {localStorage.setItem('battery-panic-best',String(high));}catch (_){} }
+    status.textContent=`Game over. Score ${score}. Best ${high}. Press A or Z to restart.`;
+    canvas.setAttribute('aria-label',`Game over. Score ${score}. Best ${high}. Press A or Z to restart.`);
+  }
+  function action(key) {
+    if(key==='a' && (state==='title'||state==='over'&&endDelay<=0)) {start();return;}
+    if(state!=='playing') return;
+    if(key==='a' && player.aCD<=0) {
+      const dx=Number(down('right'))-Number(down('left')),dy=Number(down('down'))-Number(down('up'));
+      // Dominant axis keeps both walking and dashing strictly four-directional.
+      if(dx) {player.faceX=dx;player.faceY=0;}else if(dy) {player.faceX=0;player.faceY=dy;}
+      player.dashX=player.faceX;player.dashY=player.faceY;player.dash=.16;player.aCD=DASH_CD;sound('dash');
+    }
+    if(key==='b' && player.bCD<=0) {
+      player.bCD=EMP_CD;rings.push({x:player.x,y:player.y,life:.45});spark(player.x,player.y,C.cyan,15);sound('emp');
+      for(const e of enemies) {
+        const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy);
+        if(d<65) { const angle=d>.1?Math.atan2(dy,dx):rand(0,Math.PI*2);e.vx=Math.cos(angle)*175;e.vy=Math.sin(angle)*175;e.stun=1.8;spark(e.x,e.y,C.cyan,4); }
+      }
+    }
+  }
+  function syncButton(key) { const button=buttons.find(b=>b.dataset.control===key);button.classList.toggle('pressed',down(key));button.setAttribute('aria-pressed',String(down(key))); }
+  function press(key,source) { const was=down(key);inputs[key].add(source);syncButton(key);if(!was) action(key); }
+  function release(key,source) { inputs[key].delete(source);syncButton(key); }
+  function clearInputs() { for(const k in inputs) {inputs[k].clear();syncButton(k);}pointers.clear(); }
+  const keyMap={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',KeyZ:'a',KeyX:'b'};
+  window.addEventListener('keydown',e=>{
+    const key=keyMap[e.code];if(!key||e.ctrlKey||e.metaKey||e.altKey) return;
+    e.preventDefault();if(e.repeat) return;unlockAudio();press(key,'keyboard:'+e.code);
+  });
+  window.addEventListener('keyup',e=>{const key=keyMap[e.code];if(key){e.preventDefault();release(key,'keyboard:'+e.code);}});
+  for(const button of buttons) {
+    button.addEventListener('pointerdown',e=>{
+      if(e.pointerType==='mouse'&&e.button!==0) return;
+      e.preventDefault();unlockAudio();button.setPointerCapture(e.pointerId);pointers.set(e.pointerId,button.dataset.control);press(button.dataset.control,'pointer:'+e.pointerId);
+    });
+    const finish=e=>{const key=pointers.get(e.pointerId);if(key) {release(key,'pointer:'+e.pointerId);pointers.delete(e.pointerId);}};
+    button.addEventListener('pointerup',finish);button.addEventListener('pointercancel',finish);button.addEventListener('lostpointercapture',finish);
+    button.addEventListener('contextmenu',e=>e.preventDefault());
+    // Assistive technology activation also passes through the same action function.
+    button.addEventListener('click',e=>{if(e.detail===0){unlockAudio();action(button.dataset.control);}});
+  }
+  window.addEventListener('blur',()=>{clearInputs();lastTime=0;accumulator=0;});
+  document.addEventListener('visibilitychange',()=>{clearInputs();lastTime=0;accumulator=0;});
+  function update(dt) {
+    visualTime+=dt;endDelay=Math.max(0,endDelay-dt);
+    for(const p of particles) {p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;}
+    particles=particles.filter(p=>p.life>0);
+    for(const t of trails) t.life-=dt;trails=trails.filter(t=>t.life>0);
+    for(const r of rings) r.life-=dt;rings=rings.filter(r=>r.life>0);
+    if(state!=='playing') return;
+    age+=dt;power=Math.max(0,power-dt*(2.4+Math.min(age/100,.8)));
+    player.aCD=Math.max(0,player.aCD-dt);player.bCD=Math.max(0,player.bCD-dt);player.invincible=Math.max(0,player.invincible-dt);
+    shake=Math.max(0,shake-dt);damageFlash=Math.max(0,damageFlash-dt);pickupFlash=Math.max(0,pickupFlash-dt);
+    const dx=Number(down('right'))-Number(down('left')),dy=Number(down('down'))-Number(down('up'));
+    const mx=dx,my=dx?0:dy;
+    if(player.dash>0) {
+      trails.push({x:player.x,y:player.y,life:.16});player.x+=player.dashX*235*dt;player.y+=player.dashY*235*dt;player.dash=Math.max(0,player.dash-dt);
+    } else {player.x+=mx*66*dt;player.y+=my*66*dt;if(mx||my){player.faceX=mx;player.faceY=my;}}
+    player.x=clamp(player.x,FIELD.left+6,FIELD.right-6);player.y=clamp(player.y,FIELD.top+7,FIELD.bottom-7);
+    for(let i=batteries.length-1;i>=0;i--) {
+      const b=batteries[i];if(Math.hypot(player.x-b.x,player.y-b.y)<10) {batteries.splice(i,1);power=Math.min(100,power+24);score=Math.min(999999,score+100);spark(b.x,b.y,C.yellow,12);pickupFlash=.18;sound('pickup');placeBattery();}
+    }
+    spawnClock+=dt;
+    const target=Math.min(14,3+Math.floor(age/10));
+    if(enemies.length<target && spawnClock>1.5) {spawnEnemy();spawnClock=0;}
+    for(const e of enemies) {
+      e.stun=Math.max(0,e.stun-dt);
+      if(e.stun<=0) {
+        const ex=player.x-e.x,ey=player.y-e.y,d=Math.hypot(ex,ey)||1,speed=16+Math.min(age*.24,27);
+        e.x+=ex/d*speed*dt;e.y+=ey/d*speed*dt;
+      }
+      e.x+=e.vx*dt;e.y+=e.vy*dt;e.vx*=Math.exp(-7*dt);e.vy*=Math.exp(-7*dt);
+      e.x=clamp(e.x,FIELD.left+5,FIELD.right-5);e.y=clamp(e.y,FIELD.top+5,FIELD.bottom-5);
+      if(e.stun<=0 && player.dash<=0 && player.invincible<=0 && Math.hypot(e.x-player.x,e.y-player.y)<10) {
+        power=Math.max(0,power-20);player.invincible=1.15;e.stun=.45;damageFlash=.15;shake=reduced?0:.18;spark(player.x,player.y,C.red,12);sound('damage');
+        const angle=Math.atan2(e.y-player.y,e.x-player.x);e.vx=Math.cos(angle)*100;e.vy=Math.sin(angle)*100;
+      }
+    }
+    if(power<=0) end();
+  }
+  function batterySprite(x,y,large=false) {
+    ctx.save();ctx.translate(Math.round(x),Math.round(y));if(large)ctx.scale(2,2);
+    rect(-4,5,9,2,'#152f35');rect(-2,-7,4,2,C.cream);rect(-4,-5,8,11,C.dark);rect(-3,-4,6,9,C.orange);rect(-3,-4,6,3,C.yellow);rect(-2,-3,1,7,'#ffeaa3');rect(-1,-2,3,1,C.dark);rect(0,-3,1,3,C.dark);rect(-1,2,3,1,C.dark);ctx.restore();
+  }
+  function playerSprite(x,y,frame=0) {
+    const px=Math.round(x),py=Math.round(y),step=Math.floor(frame*8)%2;
+    rect(px-5,py+6,10,2,'#153b38');rect(px-5,py-6,10,10,C.dark);rect(px-4,py-7,8,2,C.cyan);rect(px-5,py-5,10,6,C.cyan);rect(px-3,py-4,6,4,C.dark);rect(px-2,py-3,2,1,C.cream);rect(px+1,py-3,2,1,C.cream);
+    rect(px-3,py+1,6,4,C.orange);rect(px-2,py+1,4,2,C.yellow);rect(px-6,py+1,2,3,C.cyan);rect(px+4,py+1,2,3,C.cyan);rect(px-3,py+5+step,2,2,C.cream);rect(px+1,py+6-step,2,2,C.cream);rect(px-1,py-10,2,3,C.dark);rect(px-1,py-10,2,1,C.yellow);
+  }
+  function enemySprite(e) {
+    const x=Math.round(e.x),y=Math.round(e.y),j=Math.floor(visualTime*8+e.phase)%2;
+    rect(x-5,y+5,10,2,'#173d39');rect(x-5,y-4,10,8,C.dark);rect(x-4,y-5,8,8,e.stun>0?C.blue:e.color);rect(x-6-j,y-2,2,3,e.color);rect(x+4+j,y,2,3,e.color);rect(x-3,y+3,2,2,e.color);rect(x+1,y+3,2,2,e.color);
+    rect(x-3,y-2,2,2,C.dark);rect(x+1,y-2,2,2,C.dark);rect(x-2,y-2,1,1,C.cream);rect(x+2,y-2,1,1,C.cream);rect(x-1,y+1,2,1,C.dark);
+    if(e.stun>0) {rect(x-4,y-9,2,1,C.cyan);rect(x+3,y-8,2,1,C.cyan);}
+  }
+  function arena() {
+    rect(0,0,W,H,C.dark);rect(6,30,228,173,'#183d3d');rect(9,33,222,167,C.floor);
+    for(let row=0;row<10;row++)for(let col=0;col<14;col++) {const x=10+col*16,y=35+row*16;if((row+col)%2===0)rect(x,y,16,16,C.tile);rect(x+2,y+2,1,1,C.line);}
+    // Tiny circuit traces at the perimeter establish the arena without obstructing it.
+    for(let i=0;i<7;i++) {const y=45+i*22;rect(4,y,2,8,C.blue);rect(234,y+5,2,8,C.blue);}
+    for(let i=0;i<10;i++) {rect(15+i*23,202,8,2,C.line);}
+    ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(9.5,33.5,221,166);
+    rect(14,39,10,1,C.mint);rect(14,39,1,8,C.mint);rect(216,191,10,1,C.mint);rect(225,184,1,8,C.mint);
+  }
+  function hud() {
+    text('SCORE',9,5,C.mint);text(String(score).padStart(5,'0'),9,14,C.cream);
+    text('BEST',69,5,C.mint);text(String(Math.max(score,high)).padStart(5,'0'),69,14,C.yellow);
+    const low=power<25,color=low?C.red:C.mint;
+    text(low&&Math.floor(visualTime*3)%2?'LOW!':'POWER',128,5,color);
+    rect(128,13,49,9,C.blue);rect(177,15,2,5,C.blue);rect(130,15,45,5,C.dark);
+    rect(130,15,Math.ceil(45*power/100),5,color);
+    text('A',189,5,C.cream);text('B',214,5,C.cream);
+    const a=player?player.aCD:0,b=player?player.bCD:0;
+    rect(188,15,17,5,C.blue);rect(188,15,Math.round(17*(1-a/DASH_CD)),5,C.yellow);
+    rect(213,15,17,5,C.blue);rect(213,15,Math.round(17*(1-b/EMP_CD)),5,C.cyan);
+    rect(9,25,222,1,C.blue);
+  }
+  function title() {
+    rect(0,0,W,H,C.dark);
+    for(let i=0;i<36;i++) {let x=(i*47+11)%W,y=(i*29+19)%H;rect(x,y,1,1,i%3===0?C.line:C.blue);}
+    text('BATTERY',W/2,24,C.dark,3,true);text('BATTERY',W/2,22,C.yellow,3,true);
+    text('PANIC',W/2,48,'#874c5d',4,true);text('PANIC',W/2,46,C.red,4,true);
+    text('KEEP THE SPARK ALIVE',W/2,76,C.mint,1,true);
+    rect(19,91,202,47,'#214b46');rect(19,91,202,1,C.line);rect(19,137,202,1,C.line);
+    batterySprite(60,114,true);playerSprite(119,117,visualTime);enemySprite({x:179,y:117,stun:0,color:C.purple,phase:0});
+    text('COLLECT',60,144,C.yellow,1,true);text('DASH',119,144,C.cyan,1,true);text('DODGE',179,144,C.purple,1,true);
+    text('PRESS A TO START',W/2,160,C.cream,2,true);
+    text('A DASH  /  B EMP',W/2,179,C.mint,1,true);
+    text('BEST '+String(high).padStart(5,'0'),W/2,195,C.yellow,1,true);
+  }
+  function draw() {
+    if(state==='title') {title();return;}
+    arena();ctx.save();
+    if(shake>0)ctx.translate(Math.round(rand(-2,2)),Math.round(rand(-2,2)));
+    ctx.beginPath();ctx.rect(10,35,220,163);ctx.clip();
+    for(const b of batteries) batterySprite(b.x,b.y+(reduced?0:Math.round(Math.sin(visualTime*3+b.phase))));
+    for(const t of trails) {ctx.globalAlpha=t.life/.16*.5;rect(t.x-4,t.y-5,8,10,C.cyan);}ctx.globalAlpha=1;
+    for(const e of enemies) enemySprite(e);
+    if(player.invincible<=0||Math.floor(visualTime*12)%2===0||state==='over') playerSprite(player.x,player.y,down('left')||down('right')||down('up')||down('down')?visualTime:0);
+    for(const r of rings) {ctx.strokeStyle=C.cyan;ctx.lineWidth=2;ctx.globalAlpha=r.life/.45;ctx.beginPath();ctx.arc(r.x,r.y,(1-r.life/.45)*68+3,0,Math.PI*2);ctx.stroke();}ctx.globalAlpha=1;
+    for(const p of particles) rect(p.x,p.y,2,2,p.color);
+    if(pickupFlash>0) {ctx.globalAlpha=pickupFlash*.65;rect(10,35,220,163,C.yellow);ctx.globalAlpha=1;}
+    if(damageFlash>0) {ctx.globalAlpha=damageFlash*1.4;rect(10,35,220,163,C.red);ctx.globalAlpha=1;}
+    ctx.restore();hud();
+    if(state==='over') {
+      ctx.globalAlpha=.78;rect(9,33,222,167,C.dark);ctx.globalAlpha=1;
+      rect(26,66,188,99,C.dark);rect(26,66,188,2,C.red);rect(26,164,188,1,C.blue);
+      text('OUT OF JUICE',120,80,C.red,2,true);text('GAME OVER',120,99,C.cream,1,true);
+      text('SCORE '+String(score).padStart(5,'0'),120,115,C.yellow,1,true);text('BEST  '+String(high).padStart(5,'0'),120,128,C.mint,1,true);
+      if(endDelay<=0)text('A TO RECHARGE',120,145,C.cream,2,true);
+    }
+  }
+  // One permanent animation loop and one set of listeners; restarting only resets data.
+  function frame(now) {
+    const dt=lastTime?Math.min((now-lastTime)/1000,.1):0;lastTime=now;
+    if(!document.hidden) {accumulator+=dt;while(accumulator>=1/60) {update(1/60);accumulator-=1/60;}draw();}
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
