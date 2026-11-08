@@ -36,11 +36,10 @@ Verified live URL: https://akearse.github.io/battery-panic-game/
 
 Public deployment records identify `main` and the `github-pages` environment. The existing live document matched the committed root `index.html` when inspected. The private Pages settings endpoint was unavailable, so the exact configured publishing-directory setting could not be directly inspected. No configuration changes were made. The root `index.html` is now the arcade hub locally.
 
-Do not publish until the owner approves. No push or deployment was performed for this change.
+The owner approved publishing on 2026-11-08. The arcade was committed and pushed to the existing main branch; GitHub Pages publishes the root hub.
 
 ## Assets
 
 `assets/fonts/Sora-Variable.ttf` is self-hosted Sora from the Google Fonts repository (https://github.com/google/fonts/tree/main/ofl/sora). Its SIL Open Font License is included at `assets/fonts/OFL.txt`. All preview art and console geometry are authored inline SVG/CSS. Preview artwork is a themed representation; the games retain their own original visuals.
 
 For live verification, set the PowerShell environment variable `ARCADE_BASE_URL` to `https://akearse.github.io/battery-panic-game/` before running `node qa/test.cjs`. The same browser assertions then exercise the published site.
-

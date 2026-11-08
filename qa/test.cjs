@@ -28,7 +28,7 @@ const out = path.join(__dirname, "screenshots");
     const page = await context.newPage();
     page.on("pageerror", (e) => errors.push(spec.name + ": " + e.message));
     page.on("console", (m) => {
-      if (m.type() === "error") errors.push(spec.name + ": " + m.text());
+      if (m.type() === "error") errors.push(spec.name + ": " + m.text() + " " + m.location().url);
     });
     page.on("response", (r) => {
       if (r.status() >= 400)
