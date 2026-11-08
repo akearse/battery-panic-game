@@ -1,0 +1,45 @@
+/* Integration navigation is scoped to its own element; game styles stay isolated. */
+.arcade-return,
+.arcade-return:visited {
+  position: fixed;
+  z-index: 2147483647;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(10px, env(safe-area-inset-right));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 15px;
+  margin: 0;
+  border: 1px solid #dad9ca;
+  border-radius: 8px;
+  background: #f7f5e9;
+  color: #343c36;
+  box-shadow: 0 3px 10px #18261d24;
+  font:
+    700 12px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  touch-action: manipulation;
+}
+.arcade-return:hover {
+  background: #e4ebd4;
+}
+.arcade-return:focus-visible {
+  outline: 3px solid #8d335e;
+  outline-offset: 3px;
+}
+/* Reserve a separate top row for games whose HUD already occupies the top edge. */
+body.arcade-integrated {
+  padding-top: calc(64px + env(safe-area-inset-top));
+}
+body.arcade-soap #hud {
+  top: calc(64px + env(safe-area-inset-top));
+}
+@media (max-height: 450px) {
+  body.arcade-integrated {
+    padding-top: calc(54px + env(safe-area-inset-top));
+  }
+}

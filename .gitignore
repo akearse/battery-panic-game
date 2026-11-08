@@ -1,0 +1,5 @@
+node_modules/
+qa/screenshots/
+qa/results.json
+.impeccable/
+*.log

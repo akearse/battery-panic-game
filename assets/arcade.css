@@ -1,0 +1,701 @@
+@font-face {
+  font-family: Sora;
+  src: url("fonts/Sora-Variable.ttf") format("truetype");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  color-scheme: light;
+  --paper: #eeede3;
+  --ink: #303e36;
+  --muted: #586451;
+  --berry: #843653;
+  --lcd: #b3c88d;
+  --shell: #e0dfd3;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 24px;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Sora, Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: var(--berry);
+  color: #fff8e9;
+}
+a {
+  color: inherit;
+  text-underline-offset: 4px;
+}
+a:focus-visible {
+  outline: 3px solid var(--berry);
+  outline-offset: 5px;
+}
+svg {
+  display: block;
+}
+.shell {
+  max-width: 1380px;
+  margin: auto;
+  padding: 0 56px;
+}
+.masthead {
+  min-height: 103px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #c8ccbe;
+  gap: 20px;
+}
+.wordmark {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+.wordmark svg {
+  width: 31px;
+  height: 38px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.wordmark b {
+  font-weight: 500;
+  letter-spacing: 0.17em;
+  font-size: 10px;
+  display: block;
+  margin-top: 4px;
+}
+.power {
+  font:
+    700 10px/1.4 "Courier New",
+    monospace;
+  letter-spacing: 0.13em;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.power i {
+  width: 7px;
+  height: 7px;
+  background: #688448;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px #68844850;
+}
+.intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 0 53px;
+  gap: 32px;
+}
+h1 {
+  font-size: clamp(40px, 4.6vw, 65px);
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+  margin: 0;
+  font-weight: 800;
+}
+h1 span {
+  color: var(--berry);
+}
+.intro p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 23px 0 0;
+}
+.console-stamp {
+  position: relative;
+  width: 234px;
+  flex-shrink: 0;
+  padding: 18px 18px 32px;
+  background: #e0e0d3;
+  border-radius: 14px 14px 45px 14px;
+  box-shadow:
+    inset 1px 2px 2px #faf9ef,
+    inset -1px -2px 2px #b8bdb0,
+    0 14px 22px -15px #56634a60;
+  transform: rotate(7deg);
+  margin-right: 29px;
+}
+.stamp-screen {
+  padding: 10px 14px;
+  background: #536054;
+  border-radius: 5px 5px 17px 5px;
+}
+.stamp-screen svg {
+  background: var(--lcd);
+  width: 100%;
+  stroke: #3e5632;
+  stroke-width: 6;
+  fill: #3e5632;
+  image-rendering: pixelated;
+}
+.stamp-screen .smile {
+  fill: none;
+  stroke-width: 4;
+}
+.console-stamp > span {
+  display: block;
+  font:
+    700 8px/1.5 "Courier New",
+    monospace;
+  letter-spacing: 0.06em;
+  margin-top: 10px;
+}
+.stamp-slots {
+  position: absolute;
+  bottom: 17px;
+  right: 23px;
+  display: flex;
+  gap: 4px;
+  transform: rotate(-20deg);
+}
+.stamp-slots i {
+  width: 3px;
+  height: 14px;
+  background: #a4ac9c;
+  border-radius: 3px;
+}
+.collection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.collection-heading h2 {
+  font-size: 18px;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.collection-heading > span {
+  font:
+    700 10px/1.4 "Courier New",
+    monospace;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.games {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+}
+.cartridge {
+  min-width: 0;
+  background: var(--shell);
+  border-radius: 12px 12px 25px 12px;
+  padding: 12px 12px 0;
+  box-shadow:
+    inset 1px 2px 1px #fbfaf0,
+    inset -1px -2px 2px #bac0b0,
+    0 9px 18px -14px #3f4e3e70;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.cartridge:has(a:hover) {
+  transform: translateY(-5px);
+  box-shadow:
+    inset 1px 2px 1px #fbfaf0,
+    inset -1px -2px 2px #bac0b0,
+    0 17px 23px -15px #3f4e3e70;
+}
+.grip {
+  height: 10px;
+  margin: 0 23px 12px;
+  border-top: 2px solid #bfc5b6;
+  border-bottom: 2px solid #bfc5b6;
+  position: relative;
+}
+.grip:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 3px;
+  border-top: 1px solid #bfc5b6;
+}
+.preview {
+  display: block;
+  background: var(--lcd);
+  padding: 8px 8px 0;
+  border: 6px solid #536054;
+  border-radius: 5px 5px 13px 5px;
+  text-decoration: none;
+}
+.preview svg {
+  width: 100%;
+  aspect-ratio: 240/160;
+  fill: #354d2c;
+  font:
+    700 10px "Courier New",
+    monospace;
+}
+.preview .question {
+  font-size: 25px;
+}
+.screen-caption {
+  display: block;
+  color: #283f24;
+  text-align: center;
+  font:
+    700 7px/1.5 "Courier New",
+    monospace;
+  letter-spacing: 0.08em;
+  padding: 9px 0 8px;
+}
+.battery {
+  background: #294f41;
+}
+.battery svg {
+  fill: #c9dfae;
+}
+.battery .screen-caption {
+  color: #c9dfae;
+}
+.label {
+  background: #f7f5e9;
+  padding: 17px 14px 14px;
+  margin-top: 12px;
+  border-radius: 3px;
+}
+.genre {
+  font:
+    700 8px/1.4 "Courier New",
+    monospace;
+  letter-spacing: 0.07em;
+  color: var(--berry);
+}
+h3 {
+  font-size: 20px;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+  margin: 7px 0 10px;
+}
+.label p {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #586451;
+  margin: 0;
+}
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 21px;
+}
+.card-bottom > span {
+  font-size: 10px;
+  color: #586451;
+}
+.play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  min-width: 83px;
+  padding: 0 13px;
+  background: var(--berry);
+  color: #fff8ec;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.play:hover {
+  background: #67283f;
+}
+.play svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.play:active {
+  transform: translateY(1px);
+}
+.cartridge-foot {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 11px;
+  font:
+    700 7px/1 "Courier New",
+    monospace;
+  color: #586451;
+  letter-spacing: 0.13em;
+}
+.cartridge-foot i {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #9aa58e;
+}
+.play-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 30px 0 48px;
+  color: var(--muted);
+}
+.play-note svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.play-note p {
+  font-size: 12px;
+  margin: 0;
+}
+.play-note > span {
+  margin-left: auto;
+  font:
+    700 8px "Courier New",
+    monospace;
+  letter-spacing: 0.1em;
+}
+footer {
+  border-top: 1px solid #c8ccbe;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 10px;
+  color: var(--muted);
+}
+footer > span:first-child {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+footer > span:nth-child(2) {
+  margin-left: auto;
+}
+footer a {
+  padding: 15px 0 15px 15px;
+}
+.skip {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  padding: 14px;
+  background: var(--ink);
+  color: white;
+  transform: translateY(-150%);
+}
+.skip:focus {
+  transform: none;
+}
+body {
+  scrollbar-color: #9da98e var(--paper);
+}
+@media (min-width: 1100px) {
+  .console-stamp {
+    animation: power-up 0.7s ease-out;
+  }
+  @keyframes power-up {
+    from {
+      transform: translateY(12px) rotate(3deg);
+    }
+    to {
+      transform: rotate(7deg);
+    }
+  }
+}
+@media (max-width: 1100px) {
+  .shell {
+    padding: 0 32px;
+  }
+  .games {
+    gap: 16px;
+  }
+  .label {
+    padding: 15px 10px;
+  }
+  h3 {
+    font-size: 18px;
+  }
+  .card-bottom {
+    gap: 4px;
+  }
+  .play {
+    min-width: 70px;
+    gap: 8px;
+  }
+  .card-bottom > span {
+    font-size: 9px;
+  }
+}
+@media (max-width: 900px) {
+  .games {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .cartridge {
+    padding: 16px 16px 0;
+  }
+  .label {
+    padding: 20px;
+  }
+  .label p {
+    font-size: 14px;
+  }
+  h3 {
+    font-size: 24px;
+  }
+  .genre {
+    font-size: 10px;
+  }
+  .card-bottom > span {
+    font-size: 12px;
+  }
+  .play {
+    min-width: 95px;
+    font-size: 14px;
+  }
+  .intro {
+    padding: 44px 0;
+  }
+  .console-stamp {
+    width: 190px;
+    margin-right: 8px;
+  }
+  .intro p {
+    font-size: 14px;
+  }
+  .screen-caption {
+    font-size: 8px;
+  }
+  .collection-heading > span {
+    font-size: 9px;
+  }
+  .play-note > span {
+    display: none;
+  }
+}
+@media (max-width: 540px) {
+  .shell {
+    padding: 0 20px;
+  }
+  .masthead {
+    min-height: 83px;
+  }
+  .wordmark {
+    font-size: 14px;
+    gap: 9px;
+  }
+  .wordmark svg {
+    width: 26px;
+  }
+  .wordmark b {
+    font-size: 8px;
+  }
+  .power {
+    font-size: 8px;
+    gap: 6px;
+  }
+  .intro {
+    padding: 39px 0 35px;
+  }
+  .intro h1 {
+    font-size: 42px;
+  }
+  .intro p {
+    font-size: 14px;
+    margin-top: 18px;
+    max-width: 31ch;
+  }
+  .desktop-break {
+    display: none;
+  }
+  .console-stamp {
+    display: none;
+  }
+  .collection-heading {
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .collection-heading h2 {
+    font-size: 17px;
+  }
+  .collection-heading > span {
+    max-width: 95px;
+    text-align: right;
+    font-size: 8px;
+    line-height: 1.7;
+  }
+  .games {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .cartridge {
+    padding: 16px 16px 0;
+    max-width: 380px;
+    width: 100%;
+    margin: auto;
+  }
+  .preview svg {
+    max-height: 190px;
+  }
+  .screen-caption {
+    font-size: 9px;
+  }
+  .label {
+    padding: 20px;
+  }
+  .label p {
+    font-size: 14px;
+  }
+  .card-bottom {
+    margin-top: 16px;
+  }
+  .grip {
+    margin-bottom: 14px;
+  }
+  .cartridge-foot {
+    height: 40px;
+  }
+  .play-note {
+    margin: 27px 0 34px;
+    align-items: flex-start;
+  }
+  .play-note p {
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  footer {
+    flex-wrap: wrap;
+    padding: 23px 0;
+    gap: 13px;
+    font-size: 9px;
+  }
+  footer > span:nth-child(2) {
+    margin-left: 0;
+    order: 3;
+    width: 100%;
+  }
+  footer a {
+    margin-left: auto;
+    padding: 8px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *:before,
+  *:after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Small lettering remains readable without losing the cartridge hierarchy. */
+.wordmark b,
+.power,
+.genre,
+.collection-heading > span,
+.screen-caption,
+.cartridge-foot,
+.play-note > span,
+footer {
+  font-size: 11px;
+}
+.card-bottom > span {
+  font-size: 11px;
+}
+.label p {
+  font-size: 13px;
+}
+.preview {
+  color: #354d2c;
+}
+.battery {
+  color: #c9dfae;
+}
+.preview svg {
+  fill: currentColor;
+}
+.screen-caption {
+  letter-spacing: 0;
+}
+.collection-heading > span {
+  letter-spacing: 0;
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .games {
+    gap: 14px;
+  }
+  .cartridge {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .label {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  h3 {
+    font-size: 17px;
+  }
+  .card-bottom > span {
+    font-size: 10px;
+  }
+}
+@media (max-width: 540px) {
+  .wordmark {
+    font-size: 13px;
+  }
+  .wordmark b {
+    font-size: 10px;
+  }
+  .power {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  .intro h1 {
+    font-size: clamp(31px, 9.6vw, 42px);
+  }
+  .collection-heading {
+    flex-wrap: wrap;
+  }
+  .collection-heading > span {
+    max-width: none;
+    text-align: left;
+    font-size: 10px;
+  }
+  .label p {
+    font-size: 14px;
+  }
+  .play-note p {
+    font-size: 12px;
+  }
+  footer {
+    font-size: 11px;
+  }
+}
